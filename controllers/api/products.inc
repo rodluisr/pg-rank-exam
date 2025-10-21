@@ -55,8 +55,15 @@ function get($q) {
 }
 
 function post($q) {
-    list($name, $description, $price, $stock_qty) =
-        check_params($q, 'name,description,price,stock_qty');
+	if (empty($q)) {
+        $raw = file_get_contents('php://input');
+        $j = json_decode($raw, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($j)) {
+            $q = $j;
+        }
+    }
+
+    list($name, $description, $price, $stock_qty) = check_params($q, 'name,description,price,stock_qty');
 
     $name        = trim((string)$name);
     $description = trim((string)$description);

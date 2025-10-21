@@ -345,7 +345,7 @@
 
 			const fd = new FormData();
 			fd.append('file', state.file.file, state.file.file.name);
-			xhr.open('POST', '/api/products'); // your backend uploader
+			xhr.open('POST', '/api/uploads'); // your backend uploader
 			xhr.send(fd);
 		});
 	}
@@ -391,43 +391,55 @@
 	async function handleAddSave() {
 		if (state.saving) return;
 
-		const name = document.getElementById('addName')?.value.trim();
+		const name = document.getElementById('addName')?.value.trim() || '';
 		const price = Number(document.getElementById('addPrice')?.value || 0);
-		const desc = document.getElementById('addDesc')?.value.trim();
-		const cat   = document.getElementById('addCategory')?.value || ''; // slug from dropdown
-		const stock = 0; // or read from a field
+		const desc = document.getElementById('addDesc')?.value.trim() || '';
+		const cat = (document.getElementById('addCategory')?.value || '').trim(); // slug
+		const stock = Number(document.getElementById('addStock')?.value || 0);
 
 		if (!name) return showToast('Name is required');
 		if (!(price > 0)) return showToast('Price must be greater than 0');
-		// if (!cat) return showToast('Choose a category');
+		if (!cat) return showToast('Choose a category');
 
 		try {
 			state.saving = true;
 			disableModal(true);
 
-			// Upload image -> returns S3 URL
+			// Upload to /api/uploads
 			let thumbnailUrl = '';
 			if (state.file?.file) {
-				thumbnailUrl = await uploadSingleFile(); // POST /api/uploads (FormData)
+				thumbnailUrl = await uploadSingleFile();
 			}
 
-			const addProductParams = {
-				name,
+			const payload = {
+				name: name,
 				description: desc,
-				price,
-				stock_qty: stock,
-				cagegory: cat,
+				price: price,
+				stock_qty: String(stock),  // backend allows 0
+				category: cat,             // slug string
 				thumbnail: thumbnailUrl || ''
 			};
 
-			await Http.post('/api/products', addProductParams);
+			const r = await fetch('/api/products', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(payload)
+			});
 
-			// 3) Refresh
+			const text = await r.text();
+			let json; try { json = text ? JSON.parse(text) : null; } catch { }
+			if (!r.ok) {
+				console.error('[add] server', r.status, json || text);
+				showToast(json?.error || `Save failed. Please try again. [${r.status}]`);
+				return;
+			}
+
+			showToast('Product created');
 			closeAddModal();
 			clearAddForm();
-			await hardRefreshList();
+			await hardRefreshList();  // reset pagination & reload with current filters
 		} catch (e) {
-			console.error('save failed', e);
+			console.error('[add] error', e);
 			showToast('Failed to save product.');
 		} finally {
 			state.saving = false;
@@ -455,17 +467,37 @@
 		ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
 	}
 
-	function populateCategorySelect(cats) {
-		const sel = document.getElementById('addCategory');
-		if (!sel) return;
-		while (sel.options.length > 1) sel.remove(1);
+	async function populateCategorySelect() {
+		try {
+			const res = await Http.get('/api/categories');
+			const cats = Array.isArray(res?.result) ? res.result : [];
+			const sel = document.getElementById('addCategory');
+			if (!sel) return;
 
-		cats.forEach(c => {
-			if (c.slug === 'all') return;
-			const opt = document.createElement('option');
-			opt.value = c.slug;        // send slug to backend
-			opt.textContent = c.name;
-			sel.appendChild(opt);
-		});
+			sel.innerHTML = '';
+			// optional placeholder
+			const ph = document.createElement('option');
+			ph.value = '';
+			ph.textContent = 'Select a category';
+			sel.appendChild(ph);
+
+			// expect each item has { slug, name } (or map them before)
+			for (const c of cats) {
+				const opt = document.createElement('option');
+				opt.value = (c.slug || slugify(c.name || '')).toLowerCase(); // value = slug
+				opt.textContent = c.name || c.slug || '';
+				sel.appendChild(opt);
+			}
+		} catch (e) {
+			console.error('[add] categories load failed', e);
+		}
+	}
+
+	function slugify(s) {
+		return String(s || '')
+			.trim()
+			.toLowerCase()
+			.replace(/\s+/g, '-')
+			.replace(/[^a-z0-9-]/g, '');
 	}
 })();
