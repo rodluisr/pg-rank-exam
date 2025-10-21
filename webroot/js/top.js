@@ -430,7 +430,7 @@
 			let json; try { json = text ? JSON.parse(text) : null; } catch { }
 			if (!r.ok) {
 				console.error('[add] server', r.status, json || text);
-				showToast(json?.error || `Save failed. Please try again. [${r.status}]`);
+				showToast(json?.error || `Save failed. Please try again. `);
 				return;
 			}
 
@@ -500,4 +500,18 @@
 			.replace(/\s+/g, '-')
 			.replace(/[^a-z0-9-]/g, '');
 	}
+	// manual masonry toggle (for testing)
+	// document.addEventListener('DOMContentLoaded', () => {
+	// 	const masonryBtn = document.querySelector('.masonry-toggle');
+	// 	if (!masonryBtn) return;
+
+	// 	masonryBtn.addEventListener('click', () => {
+	// 		document.body.classList.toggle('masonry-active');
+
+	// 		const isActive = document.body.classList.contains('masonry-active');
+	// 		masonryBtn.textContent = isActive ? 'Grid' : 'Masonry'; // toggle button label
+
+	// 		window.scrollTo({ top: 0, behavior: 'smooth' });
+	// 	});
+	// });
 })();

@@ -122,6 +122,13 @@ a:hover {
 	padding: 0 var(--space-4);
 }
 
+.top-nav .left {
+	align-items: center;
+}
+
+.top-nav .left button {
+	cursor: pointer;
+}
 .top-nav h3 {
 	margin: 0;
 }
@@ -430,6 +437,13 @@ p {
 	overflow: hidden;
 }
 
+.card img {
+	align-self: center;
+	width: 140px;
+	height: 140px;
+	margin-bottom: var(--gap-1);
+}
+
 /* Buttons */
 .button {
 	display: inline-flex;
@@ -483,7 +497,6 @@ p {
 }
 
 .list>li {
-	padding: 12px 14px;
 	border-bottom: 1px solid var(--border);
 }
 
@@ -793,13 +806,22 @@ p {
 /* Keep the active category look consistent with your tokens */
 .cat-link {
 	display: block;
-	padding: 8px 10px;
+	padding: 18px 14px;
 	border-radius: 8px;
+	cursor: pointer !important;
+}
+
+li:has(.cat-link) {
+	cursor: pointer;
+}
+
+li:has(.cat-link.active) {
+	background: var(--brand);
 }
 
 .cat-link.active {
-	background: var(--surface);
-	color: var(--brand);
+	background: var(--brand);
+	/* color: var(--brand); */
 }
 
 /* Reduced motion preference */
@@ -818,4 +840,39 @@ p {
 	.hamburger {
 		display: none;
 	}
+}
+
+
+/* ===== Masonry Layout Mode ===== */
+
+/* Base grid */
+#productsList {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: var(--gap-5);
+	transition: all 0.3s ease;
+}
+
+/* Masonry mode toggle */
+.masonry-active #productsList {
+	column-count: 3;              /* adjust column count here */
+	column-gap: var(--gap-5);
+	display: block;               /* override grid for masonry */
+}
+
+/* Each card inside masonry */
+.masonry-active #productsList .card {
+	display: inline-block;
+	width: 100%;
+	margin-bottom: var(--gap-5);
+	break-inside: avoid;          /* prevents item splitting */
+	transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* Responsive column counts */
+@media (max-width: 1024px) {
+	.masonry-active #productsList { column-count: 2; }
+}
+@media (max-width: 600px) {
+	.masonry-active #productsList { column-count: 1; }
 }

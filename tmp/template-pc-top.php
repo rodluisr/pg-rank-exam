@@ -3,7 +3,7 @@
 
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>PG Rank Exam</title>
+	<title>Products - PG Rank Exam (Luis)</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="description" content="">
 	<meta name="color-scheme" content="light dark">
@@ -11,7 +11,7 @@
 	<script src="/js/main.js"></script>
 </head>
 
-<body>
+<body class="masonry-active">
 </body>
 
 </html><?= $LBR__page_script ?>
@@ -34,7 +34,7 @@
 	<div class="top-nav">
 		<div class="left row">
 			<h3>Products</h3>
-			<button class="masonry-toggle button ghost" aria-label="Toggle masonry layout">Masonry</button>
+			<!-- <button class="masonry-toggle button ghost" aria-label="Toggle masonry layout">Masonry</button> -->
 		</div>
 		<div class="row">
 			<input type="text" id="filterInput" class="input" placeholder="Search..." aria-label="search">
