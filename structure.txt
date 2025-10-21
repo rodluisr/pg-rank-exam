@@ -1,0 +1,53 @@
+.
+├── .gitignore
+├── .vscode
+│   └── settings.json
+├── conf
+│   ├── conf.inc
+│   ├── schemas
+│   │   └── products.ini
+│   └── text.csv
+├── controllers
+│   ├── api
+│   │   └── products.inc
+│   ├── products.inc
+│   └── top.inc
+├── delegate
+│   ├── AuthDelegate.inc
+│   ├── OAuthDelegate.inc
+│   ├── PathDelegate.inc
+│   ├── RenderDelegate.inc
+│   └── RestfulDelegate.inc
+├── info.php
+├── liber.php
+├── liberswoole.php
+├── modules
+│   ├── Email.inc
+│   └── Utils.inc
+├── README.md
+├── requirements.md
+├── script
+│   └── patches.php
+├── structure.txt
+├── tmp
+│   └── template-pc-top.php
+├── views
+│   ├── pc
+│   │   ├── _layout.html
+│   │   ├── products.html
+│   │   └── top.html
+│   └── sm -> ./pc
+└── webroot
+    ├── css
+    │   ├── pages
+    │   │   ├── products.css
+    │   │   ├── products.css.map
+    │   │   ├── top.css
+    │   │   └── top.css.map
+    │   ├── style.css
+    │   └── style.css.map
+    └── js
+        ├── main.js
+        └── top.js
+
+17 directories, 34 files

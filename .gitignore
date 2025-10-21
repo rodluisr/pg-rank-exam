@@ -1,0 +1,31 @@
+# tmp/
+.sass-cache
+
+# config ignore
+conf/conf.inc
+
+.vscode
+node_modules
+vendor
+
+# override config
+conf/_conf.inc
+.DS_Store
+
+webroot/css/widgets/*.map
+webroot/js/sdk/*.js
+webroot/css/style.css.map
+
+# custom API
+controllers/clients/b[0-9]*_*.inc
+
+# phpstorm 编译文件
+.idea
+# 本地 git 历史文件
+.history
+
+# local conf
+_conf.inc
+
+# log
+nohup.out

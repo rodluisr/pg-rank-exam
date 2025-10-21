@@ -1,0 +1,127 @@
+{$page_script}
+
+<div class="container section grid cols-12 gap-6 md-cols-12">
+	<!-- Mobile hamburger -->
+	<button class="hamburger show-sm" data-toggle="sidebar" aria-label="Open categories" aria-expanded="false"
+		aria-controls="side-cats">
+		<span></span><span></span><span></span>
+	</button>
+
+	<!-- Categories sidebar -->
+	<aside class="card p-6" style="grid-column: span 12; max-width:260px" aria-label="Categories">
+		<h2 class="mb-4">Categories</h2>
+		<ul id="catList" class="list list--divided" role="menu" aria-orientation="vertical">
+			<li><a href="#" class="cat-link active" data-cat="all" role="menuitem" aria-current="true">All</a></li>
+		</ul>
+	</aside>
+
+	<div class="top-nav">
+		<div class="left row">
+			<h3>Products</h3>
+			<button class="masonry-toggle button ghost" aria-label="Toggle masonry layout">Masonry</button>
+		</div>
+		<div class="row">
+			<input type="text" id="filterInput" class="input" placeholder="Search..." aria-label="search">
+			<button id="addFilterBtn" class="button primary" aria-label="Add filter">Add</button>
+		</div>
+	</div>
+
+	<!-- Products -->
+	<main id="products" class="grid gap-6" style="grid-column: span 12;">
+		<div id="productsLoading" class="muted" aria-live="polite" hidden>Loading…</div>
+		<div id="productsEmpty" class="muted" hidden>No products found.</div>
+		<div id="productsList" class="grid auto gap-5" aria-live="polite"></div>
+	</main>
+</div>
+
+<!-- Templates -->
+<template id="tpl-product-card">
+	<div class="card p-6">
+		<div class="row wrap gx-4">
+			<img class="p-img" alt="" style="max-width:140px;border-radius:10px;border:1px solid var(--border)">
+			<div class="p-body" style="min-width:240px">
+				<h2 class="p-name mb-4" style="margin-top:0"></h2>
+				<p class="p-desc muted"></p>
+				<p class="p-meta mt-4"><strong class="p-price"></strong><span class="p-stock"></span></p>
+			</div>
+		</div>
+	</div>
+</template>
+
+<template id="tpl-cat-item">
+	<li>
+		<a href="#" class="cat-link" role="menuitem"></a>
+	</li>
+</template>
+
+
+<!-- Add Product Modal -->
+<div id="addModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="addModalTitle" hidden>
+	<div class="modal__backdrop" data-close></div>
+	<div class="modal__panel card p-6">
+		<div class="row justify-between items-center mb-4">
+			<h3 id="addModalTitle" class="m-0">Add product</h3>
+			<button type="button" class="button ghost" data-close aria-label="Close">✕</button>
+		</div>
+
+		<div class="grid gap-4">
+			<label class="field">
+				<span class="label">Name</span>
+				<input id="addName" class="input" type="text" placeholder="Product name" required>
+			</label>
+
+			<div class="row gx-4">
+				<label class="field" style="flex:1">
+					<span class="label">Price (¥)</span>
+					<input id="addPrice" class="input" type="number" min="0" step="1" placeholder="0" required>
+				</label>
+				<label class="field" style="flex:1">
+					<span class="label">Category</span>
+					<select id="addCategory" class="select" required>
+						<option value="">Select…</option>
+						<!-- JS will populate options from /api/categories -->
+					</select>
+				</label>
+			</div>
+
+			<label class="field">
+				<span class="label">Description</span>
+				<textarea id="addDesc" class="textarea" rows="3" placeholder="Short description"></textarea>
+			</label>
+
+			<!-- Drag & Drop uploader -->
+			<div id="dropZone" class="dropzone" tabindex="0" aria-label="Upload image by drag and drop">
+				<div class="dropzone__hint">
+					<strong>Drag & drop</strong> an image here, or
+					<button type="button" id="pickFilesBtn" class="button ghost">Choose image</button>
+				</div>
+				<input id="fileInput" type="file" accept="image/*" hidden>
+			</div>
+
+			<!-- Single preview + per-file progress -->
+			<div id="previewOne" class="preview" hidden>
+				<img class="preview__img" alt="">
+				<div class="preview__name"></div>
+				<div class="preview__prog">
+					<div></div>
+				</div>
+			</div>
+
+			<!-- Overall progress (reuses styles) -->
+			<div id="overallProgress" class="progress" hidden>
+				<div class="progress__bar" style="width:0%"></div>
+				<span class="progress__label">0%</span>
+			</div>
+		</div>
+
+		<div class="row justify-end mt-4">
+			<button type="button" class="button ghost m-1" data-close>Cancel</button>
+			<button type="button" id="addSaveBtn" class="button primary m-1">Save</button>
+		</div>
+	</div>
+</div>
+
+<!-- toast -->
+<div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" hidden>
+	<div class="toast__body"></div>
+</div>
