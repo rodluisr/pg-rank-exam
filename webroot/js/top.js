@@ -82,7 +82,7 @@
 		els.addSaveBtn?.addEventListener('click', handleAddSave);
 
 		// Uploader
-		els.unselectImgBtn.addEventListener('click', () => {
+		els.unselectImgBtn && els.unselectImgBtn.addEventListener('click', () => {
 			// Clear selected file state
 			els.fileInput.value = '';
 			if (window.state?.file) delete window.state.file;
