@@ -34,6 +34,25 @@
 	  </div>
 	  <p id="anaEmpty" class="muted" hidden>No data for this date.</p>
 	</div>
+
+	<section class="mt-4">
+		<h3 class="mb-4">Recent activity (last 100)</h3>
+		<div class="table-responsive">
+			<table class="table" id="logsTable" aria-label="Recent logs">
+			<thead>
+				<tr>
+				<th style="min-width:160px">Time</th>
+				<th>IP</th>
+				<th>Method</th>
+				<th>Path</th>
+				<th>Status</th>
+				<th>User-Agent</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+			</table>
+		</div>
+	</section>
 	
 </div>
 <script src="/js/analytics.js"></script>
