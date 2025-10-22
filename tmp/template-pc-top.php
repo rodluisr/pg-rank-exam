@@ -5,6 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Products - PG Rank Exam (Luis)</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 	<meta name="description" content="">
 	<meta name="color-scheme" content="light dark">
 	<link rel="stylesheet" type="text/css" href="/css/style.css">
@@ -37,7 +38,12 @@
 			<!-- <button class="masonry-toggle button ghost" aria-label="Toggle masonry layout">Masonry</button> -->
 		</div>
 		<div class="row">
+			<a href="/analytics" class="button ghost" aria-label="View Analytics">Analytics</a>
 			<input type="text" id="filterInput" class="input" placeholder="Search..." aria-label="search">
+			<!-- dropdown to select categories (selects category on left sidebar aswell) -->
+			<select id="filterCategory" class="select mx-2" aria-label="Filter by category">
+				<!-- <option value="all">All categories</option> -->
+			</select>
 			<button id="addFilterBtn" class="button primary" aria-label="Add filter">Add</button>
 		</div>
 	</div>
@@ -91,6 +97,18 @@
 					<span class="label">Price (¥)</span>
 					<input id="addPrice" class="input" type="number" min="0" step="1" placeholder="0" required>
 				</label>
+				<div class="field">
+					<label for="addStock" class="label">Stock Quantity</label>
+					<input
+						type="number"
+						id="addStock"
+						class="input"
+						min="0"
+						step="1"
+						value="0"
+						placeholder="Enter stock quantity"
+					>
+				</div>
 				<label class="field" style="flex:1">
 					<span class="label">Category</span>
 					<select id="addCategory" class="select" required>
@@ -107,6 +125,7 @@
 
 			<!-- Drag & Drop uploader -->
 			<div id="dropZone" class="dropzone" tabindex="0" aria-label="Upload image by drag and drop">
+				<button type="button" class="unselect-img-btn" aria-label="Remove image">×</button>
 				<div class="dropzone__hint">
 					<strong>Drag & drop</strong> an image here, or
 					<button type="button" id="pickFilesBtn" class="button ghost">Choose image</button>

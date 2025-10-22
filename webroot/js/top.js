@@ -47,6 +47,8 @@
 	els.progress = document.getElementById('overallProgress');
 	els.progressBar = els.progress?.querySelector('.progress__bar');
 	els.progressLbl = els.progress?.querySelector('.progress__label');
+	els.unselectImgBtn = els.dropZone?.querySelector('.unselect-img-btn');
+	els.filterCategory = document.getElementById('filterCategory');
 
 	// state additions
 	state.file = null;
@@ -58,7 +60,9 @@
 		// Build categories
 		const cats = await fetchCategories();
 		renderCategories(cats, state.category);
+		populateFilterDropdown(cats);
 		populateCategorySelect(cats);
+		if (els.filterCategory) els.filterCategory.value = state.category || 'all';
 		ensureSentinel(); // for infinite scroll
 
 		// Search
@@ -78,8 +82,23 @@
 		els.addSaveBtn?.addEventListener('click', handleAddSave);
 
 		// Uploader
+		els.unselectImgBtn.addEventListener('click', () => {
+			// Clear selected file state
+			els.fileInput.value = '';
+			if (window.state?.file) delete window.state.file;
+			els.dropZone.classList.remove('has-file');
+
+			// Optional: remove preview image if you show one
+			const preview = els.dropZone.querySelector('img');
+			if (preview) preview.remove();
+
+			console.log('[dropzone] Image unselected');
+		});
 		els.pickFilesBtn?.addEventListener('click', () => els.fileInput?.click());
-		els.fileInput?.addEventListener('change', (e) => setSingleFile(e.target.files && e.target.files[0]));
+		els.fileInput?.addEventListener('change', (e) => {
+			setSingleFile(e.target.files && e.target.files[0]);
+
+		});
 		// Drag & drop
 		['dragenter', 'dragover'].forEach(ev =>
 			els.dropZone?.addEventListener(ev, (e) => {
@@ -96,6 +115,11 @@
 		els.dropZone?.addEventListener('drop', (e) => {
 			const f = e.dataTransfer?.files && e.dataTransfer.files[0];
 			if (f) setSingleFile(f);
+		});
+
+		els.filterCategory?.addEventListener('change', (e) => {
+			const slug = (e.target.value || 'all').trim();
+			setCategory(slug);           // centralize all syncing here
 		});
 
 		// Initial load (no delay)
@@ -256,29 +280,36 @@
 	}
 
 	// ---------------- interactions ----------------
+	// function onCategoryClick(e) {
+	// 	const a = e.target.closest('.cat-link');
+	// 	if (!a) return;
+	// 	e.preventDefault();
+
+	// 	const slug = a.dataset.cat || 'all';
+
+	// 	// toggle active
+	// 	els.catList.querySelectorAll('.cat-link').forEach(x => {
+	// 		const is = (x.dataset.cat || 'all') === slug;
+	// 		x.classList.toggle('active', is);
+	// 		if (is) x.setAttribute('aria-current', 'true'); else x.removeAttribute('aria-current');
+	// 	});
+
+	// 	// persist in URL
+	// 	const u = new URL(location.href);
+	// 	if (slug && slug !== 'all') u.searchParams.set('category', slug);
+	// 	else u.searchParams.delete('category');
+	// 	history.replaceState(null, '', u.toString());
+
+	// 	// update state and reload from page 1 (no delay)
+	// 	state.category = slug;
+	// 	resetAndLoad();
+	// }
+	
 	function onCategoryClick(e) {
 		const a = e.target.closest('.cat-link');
 		if (!a) return;
 		e.preventDefault();
-
-		const slug = a.dataset.cat || 'all';
-
-		// toggle active
-		els.catList.querySelectorAll('.cat-link').forEach(x => {
-			const is = (x.dataset.cat || 'all') === slug;
-			x.classList.toggle('active', is);
-			if (is) x.setAttribute('aria-current', 'true'); else x.removeAttribute('aria-current');
-		});
-
-		// persist in URL
-		const u = new URL(location.href);
-		if (slug && slug !== 'all') u.searchParams.set('category', slug);
-		else u.searchParams.delete('category');
-		history.replaceState(null, '', u.toString());
-
-		// update state and reload from page 1 (no delay)
-		state.category = slug;
-		resetAndLoad();
+		setCategory(a.dataset.cat || 'all');
 	}
 
 	function setSingleFile(file) {
@@ -297,6 +328,10 @@
 		if (els.previewName) els.previewName.textContent = file.name;
 		if (els.previewBar) els.previewBar.style.width = '0%';
 		if (els.previewOne) els.previewOne.hidden = false;
+
+		if (file.length) {
+			els.dropZone.classList.add('has-file');
+		}
 
 		// Reset overall progress
 		setOverallProgress(0);
@@ -396,6 +431,7 @@
 		const desc = document.getElementById('addDesc')?.value.trim() || '';
 		const cat = (document.getElementById('addCategory')?.value || '').trim(); // slug
 		const stock = Number(document.getElementById('addStock')?.value || 0);
+		console.log(" ~~~~ ~ stock: ", stock);
 
 		if (!name) return showToast('Name is required');
 		if (!(price > 0)) return showToast('Price must be greater than 0');
@@ -490,6 +526,50 @@
 			}
 		} catch (e) {
 			console.error('[add] categories load failed', e);
+		}
+	}
+
+	function populateFilterDropdown(cats) {
+		if (!els.filterCategory) return;
+
+		for (const c of cats) {
+			if (!c?.slug || !c?.name) continue;
+			const opt = document.createElement('option');
+			opt.value = c.slug;
+			opt.textContent = c.name;
+			if (c.slug === 'all') opt.textContent = 'All categories';
+			els.filterCategory.appendChild(opt);
+		}
+	}
+
+	function setCategory(slug) {
+		const next = slug || 'all';
+		state.category = next;
+
+		const u = new URL(location.href);
+		if (next !== 'all') u.searchParams.set('category', next);
+		else u.searchParams.delete('category');
+		history.replaceState(null, '', u.toString());
+
+		els.catList?.querySelectorAll('.cat-link').forEach(x => {
+			const is = (x.dataset.cat || 'all') === next;
+			x.classList.toggle('active', is);
+			if (is) x.setAttribute('aria-current', 'true'); else x.removeAttribute('aria-current');
+		});
+
+		if (els.filterCategory && els.filterCategory.value !== next) {
+			els.filterCategory.value = next;
+		}
+
+		resetAndLoad();
+	}
+
+	async function hardRefreshList() {
+		try {
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			await resetAndLoad();
+		} catch (e) {
+			console.error('[hardRefreshList] failed to reload', e);
 		}
 	}
 
