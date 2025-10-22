@@ -92,7 +92,7 @@
 				<input id="addName" class="input" type="text" placeholder="Product name" required>
 			</label>
 
-			<div class="row gx-4">
+			<div class="row gx-4" style="align-items:flex-end;">
 				<label class="field" style="flex:1">
 					<span class="label">Price (¥)</span>
 					<input id="addPrice" class="input" type="number" min="0" step="1" placeholder="0" required>
@@ -106,10 +106,10 @@
 						min="0"
 						step="1"
 						value="0"
-						placeholder="Enter stock quantity"
+						placeholder="0"
 					>
 				</div>
-				<label class="field" style="flex:1">
+				<label class="field" style="flex:1;min-width:172px;">
 					<span class="label">Category</span>
 					<select id="addCategory" class="select" required>
 						<option value="">Select…</option>

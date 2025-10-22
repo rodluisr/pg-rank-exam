@@ -568,6 +568,15 @@ p {
 	gap: 6px;
 }
 
+.field input:not(textarea):not(#fileInput), 
+.field select {
+	height: 47px;
+}
+
+.field input#addPrice {
+	min-width: 46px;
+}
+
 .label {
 	font-size: .9rem;
 	color: var(--muted);
