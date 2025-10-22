@@ -967,3 +967,51 @@ li:has(.cat-link.active) {
 		width: 100%; /* full width */
 	}
 }
+
+/* lock background scroll when sidebar is open */
+html.nav-open,
+body.nav-open {
+	overflow: hidden;
+	height: 100%;
+}
+@media (max-width: 767.98px) {
+	#side-cats {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: min(86vw, 320px);
+		max-width: 90vw;
+		height: 100dvh;
+		transform: translateX(-100%);
+		transition: transform .25s ease;
+		background: var(--bg);
+		border-right: 1px solid var(--border);
+		border-radius: 0;
+		z-index: var(--sidebar-z);
+
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		overscroll-behavior: contain;
+	}
+
+	body::before {
+		content: "";
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, .35);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity .2s ease;
+		z-index: var(--overlay-z);
+		touch-action: none;
+	}
+
+	body.nav-open #side-cats {
+		transform: translateX(0);
+	}
+
+	body.nav-open::before {
+		opacity: 1;
+		pointer-events: auto;
+	}
+}
